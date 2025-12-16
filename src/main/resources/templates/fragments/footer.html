@@ -34,11 +34,11 @@
             <div class="col-lg-2 col-md-6 mb-4">
                 <h5>Liên kết</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#">Về chúng tôi</a></li>
-                    <li class="mb-2"><a href="#">Sản phẩm</a></li>
-                    <li class="mb-2"><a href="#">Dịch vụ đan vợt</a></li>
-                    <li class="mb-2"><a href="#">Khuyến mãi</a></li>
-                    <li class="mb-2"><a href="#">Blog</a></li>
+                    <li class="mb-2"><a th:href="@{/}">Trang chủ</a></li>
+                    <li class="mb-2"><a th:href="@{/products}">Sản phẩm</a></li>
+                    <li class="mb-2"><a th:href="@{/categories}">Danh mục</a></li>
+                    <li class="mb-2"><a th:href="@{/brands}">Thương hiệu</a></li>
+                    <li class="mb-2"><a th:href="@{/products/new-arrivals}">Sản phẩm mới</a></li>
                 </ul>
             </div>
 
@@ -50,7 +50,8 @@
                     <li class="mb-2"><a href="#">Chính sách đổi trả</a></li>
                     <li class="mb-2"><a href="#">Chính sách bảo hành</a></li>
                     <li class="mb-2"><a href="#">Chính sách vận chuyển</a></li>
-                    <li class="mb-2"><a href="#">FAQ</a></li>
+                    <li class="mb-2"><a th:href="@{/faq}">FAQ</a></li>
+                    <li class="mb-2"><a th:href="@{/blog}">Blog</a></li>
                 </ul>
             </div>
 
