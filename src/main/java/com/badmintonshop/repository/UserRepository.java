@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,142 +19,147 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    /**
-     * Find user by email (not soft deleted)
-     */
-    Optional<User> findByEmailAndDeletedAtIsNull(String email);
+       /**
+        * Find user by email (not soft deleted)
+        */
+       Optional<User> findByEmailAndDeletedAtIsNull(String email);
 
-    /**
-     * Find user by Google OAuth ID
-     */
-    Optional<User> findByGoogleOauthIdAndDeletedAtIsNull(String googleOauthId);
+       /**
+        * Find user by Google OAuth ID
+        */
+       Optional<User> findByGoogleOauthIdAndDeletedAtIsNull(String googleOauthId);
 
-    /**
-     * Find user by phone
-     */
-    Optional<User> findByPhoneAndDeletedAtIsNull(String phone);
+       /**
+        * Find user by phone
+        */
+       Optional<User> findByPhoneAndDeletedAtIsNull(String phone);
 
-    /**
-     * Check if email exists
-     */
-    boolean existsByEmailAndDeletedAtIsNull(String email);
+       /**
+        * Check if email exists
+        */
+       boolean existsByEmailAndDeletedAtIsNull(String email);
 
-    /**
-     * Check if phone exists
-     */
-    boolean existsByPhoneAndDeletedAtIsNull(String phone);
+       /**
+        * Check if phone exists
+        */
+       boolean existsByPhoneAndDeletedAtIsNull(String phone);
 
-    /**
-     * Find all active users
-     */
-    Page<User> findByStatusAndDeletedAtIsNull(UserStatus status, Pageable pageable);
+       /**
+        * Find all active users
+        */
+       Page<User> findByStatusAndDeletedAtIsNull(UserStatus status, Pageable pageable);
 
-    /**
-     * Search users by name or email
-     */
-    @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
-           "AND (LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
+       /**
+        * Find all users by status (no pagination)
+        */
+       java.util.List<User> findByStatusAndDeletedAtIsNull(UserStatus status);
 
-    /**
-     * Update last login time
-     */
-    @Modifying
-    @Query("UPDATE User u SET u.lastLoginAt = :loginTime WHERE u.userId = :userId")
-    void updateLastLoginTime(@Param("userId") Long userId, @Param("loginTime") LocalDateTime loginTime);
+       /**
+        * Search users by name or email
+        */
+       @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
+                     "AND (LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                     "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+       Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
 
-    /**
-     * Soft delete user
-     */
-    @Modifying
-    @Query("UPDATE User u SET u.deletedAt = :deletedAt, u.status = 'BANNED' WHERE u.userId = :userId")
-    void softDelete(@Param("userId") Long userId, @Param("deletedAt") LocalDateTime deletedAt);
+       /**
+        * Update last login time
+        */
+       @Modifying
+       @Query("UPDATE User u SET u.lastLoginAt = :loginTime WHERE u.userId = :userId")
+       void updateLastLoginTime(@Param("userId") Long userId, @Param("loginTime") LocalDateTime loginTime);
 
-    /**
-     * Count users by status
-     */
-    long countByStatusAndDeletedAtIsNull(UserStatus status);
+       /**
+        * Soft delete user
+        */
+       @Modifying
+       @Query("UPDATE User u SET u.deletedAt = :deletedAt, u.status = 'BANNED' WHERE u.userId = :userId")
+       void softDelete(@Param("userId") Long userId, @Param("deletedAt") LocalDateTime deletedAt);
 
-    /**
-     * Find users registered within date range
-     */
-    @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
-           "AND u.createdAt BETWEEN :startDate AND :endDate")
-    Page<User> findUsersRegisteredBetween(
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
-            Pageable pageable);
+       /**
+        * Count users by status
+        */
+       long countByStatusAndDeletedAtIsNull(UserStatus status);
 
-    /**
-     * Find users with filters (search, status) with pagination
-     */
-    @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
-           "AND (:search IS NULL OR :search = '' " +
-           "     OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR u.phone LIKE CONCAT('%', :search, '%')) " +
-           "AND (:status IS NULL OR u.status = :status) " +
-           "AND (:verified IS NULL OR u.isEmailVerified = :verified) " +
-           "ORDER BY u.createdAt DESC")
-    Page<User> findWithFilters(@Param("search") String search,
-                               @Param("status") UserStatus status,
-                               @Param("verified") Boolean verified,
-                               Pageable pageable);
+       /**
+        * Find users registered within date range
+        */
+       @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
+                     "AND u.createdAt BETWEEN :startDate AND :endDate")
+       Page<User> findUsersRegisteredBetween(
+                     @Param("startDate") LocalDateTime startDate,
+                     @Param("endDate") LocalDateTime endDate,
+                     Pageable pageable);
 
-    /**
-     * Count users registered between dates
-     */
-    @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL " +
-           "AND u.createdAt BETWEEN :startDate AND :endDate")
-    long countRegisteredBetween(@Param("startDate") LocalDateTime startDate,
-                                @Param("endDate") LocalDateTime endDate);
+       /**
+        * Find users with filters (search, status, verified)
+        */
+       @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
+                     "AND (:search IS NULL OR :search = '' OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) "
+                     +
+                     "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+                     "AND (:status IS NULL OR u.status = :status) " +
+                     "AND (:verified IS NULL OR u.isEmailVerified = :verified)")
+       Page<User> findWithFilters(
+                     @Param("search") String search,
+                     @Param("status") UserStatus status,
+                     @Param("verified") Boolean verified,
+                     Pageable pageable);
 
-    /**
-     * Count users with verified email
-     */
-    @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL AND u.isEmailVerified = true")
-    long countVerifiedUsers();
+       /**
+        * Count verified users
+        */
+       @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL AND u.isEmailVerified = true")
+       long countVerifiedUsers();
 
-    /**
-     * Count active users (logged in between dates)
-     */
-    @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL " +
-           "AND u.lastLoginAt BETWEEN :startDate AND :endDate")
-    long countActiveUsersBetween(@Param("startDate") LocalDateTime startDate,
-                                 @Param("endDate") LocalDateTime endDate);
+       /**
+        * Count users registered between dates
+        */
+       @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL " +
+                     "AND u.createdAt BETWEEN :startDate AND :endDate")
+       long countRegisteredBetween(
+                     @Param("startDate") LocalDateTime startDate,
+                     @Param("endDate") LocalDateTime endDate);
 
-    /**
-     * Daily registration count for last N days
-     */
-    @Query(value = "SELECT DATE(created_at) as date, COUNT(*) as count " +
-                   "FROM users WHERE deleted_at IS NULL " +
-                   "AND created_at >= :startDate " +
-                   "GROUP BY DATE(created_at) " +
-                   "ORDER BY date ASC", nativeQuery = true)
-    List<Object[]> countDailyRegistrations(@Param("startDate") LocalDateTime startDate);
+       /**
+        * Count active users between dates (based on last login)
+        */
+       @Query("SELECT COUNT(u) FROM User u WHERE u.deletedAt IS NULL " +
+                     "AND u.lastLoginAt BETWEEN :startDate AND :endDate")
+       long countActiveUsersBetween(
+                     @Param("startDate") LocalDateTime startDate,
+                     @Param("endDate") LocalDateTime endDate);
 
-    /**
-     * Count users by gender
-     */
-    @Query("SELECT u.gender, COUNT(u) FROM User u WHERE u.deletedAt IS NULL AND u.gender IS NOT NULL GROUP BY u.gender")
-    List<Object[]> countByGender();
+       /**
+        * Count daily registrations for trend chart
+        */
+       @Query("SELECT FUNCTION('DATE', u.createdAt) as date, COUNT(u) as count " +
+                     "FROM User u WHERE u.deletedAt IS NULL AND u.createdAt >= :startDate " +
+                     "GROUP BY FUNCTION('DATE', u.createdAt) ORDER BY date")
+       java.util.List<Object[]> countDailyRegistrations(@Param("startDate") LocalDateTime startDate);
 
-    /**
-     * Count users by skill level
-     */
-    @Query("SELECT u.skillLevel, COUNT(u) FROM User u WHERE u.deletedAt IS NULL AND u.skillLevel IS NOT NULL GROUP BY u.skillLevel")
-    List<Object[]> countBySkillLevel();
+       /**
+        * Count users by gender
+        */
+       @Query("SELECT u.gender, COUNT(u) FROM User u WHERE u.deletedAt IS NULL GROUP BY u.gender")
+       java.util.List<Object[]> countByGender();
 
-    /**
-     * Find all users for export (no pagination)
-     */
-    @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
-           "AND (:search IS NULL OR :search = '' " +
-           "     OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "     OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))) " +
-           "AND (:status IS NULL OR u.status = :status) " +
-           "ORDER BY u.createdAt DESC")
-    List<User> findAllForExport(@Param("search") String search,
-                                @Param("status") UserStatus status);
+       /**
+        * Count users by skill level
+        */
+       @Query("SELECT u.skillLevel, COUNT(u) FROM User u WHERE u.deletedAt IS NULL GROUP BY u.skillLevel")
+       java.util.List<Object[]> countBySkillLevel();
+
+       /**
+        * Find all users for export with optional filters
+        */
+       @Query("SELECT u FROM User u WHERE u.deletedAt IS NULL " +
+                     "AND (:search IS NULL OR :search = '' OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) "
+                     +
+                     "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+                     "AND (:status IS NULL OR u.status = :status) " +
+                     "ORDER BY u.createdAt DESC")
+       java.util.List<User> findAllForExport(
+                     @Param("search") String search,
+                     @Param("status") UserStatus status);
 }

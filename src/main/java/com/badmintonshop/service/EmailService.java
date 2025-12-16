@@ -44,10 +44,10 @@ public class EmailService {
             context.setVariable("baseUrl", baseUrl);
 
             String htmlContent = templateEngine.process("email/verification", context);
-            
+
             sendHtmlEmail(toEmail, "Xác thực email - Badminton Shop", htmlContent);
             log.info("Verification email sent to: {}", toEmail);
-            
+
         } catch (Exception e) {
             log.error("Failed to send verification email to: {}", toEmail, e);
         }
@@ -65,10 +65,10 @@ public class EmailService {
             context.setVariable("baseUrl", baseUrl);
 
             String htmlContent = templateEngine.process("email/password-reset", context);
-            
+
             sendHtmlEmail(toEmail, "Đặt lại mật khẩu - Badminton Shop", htmlContent);
             log.info("Password reset email sent to: {}", toEmail);
-            
+
         } catch (Exception e) {
             log.error("Failed to send password reset email to: {}", toEmail, e);
         }
@@ -80,14 +80,71 @@ public class EmailService {
     private void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        
+
         // Format: "Badminton Shop <email@gmail.com>"
         String fromWithName = String.format("%s <%s>", fromName, fromEmail);
         helper.setFrom(fromWithName);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
-        
+
         mailSender.send(message);
+    }
+
+    /**
+     * Send promotional email (coupon, promotion notifications)
+     * 
+     * @param toEmail      Recipient email
+     * @param userName     User's name
+     * @param title        Email title
+     * @param message      Email message (HTML supported)
+     * @param type         Type: PROMOTION or SYSTEM
+     * @param couponCode   Optional coupon code
+     * @param discountText Optional discount description
+     * @param couponExpiry Optional expiry date string
+     * @param actionUrl    Optional CTA link
+     */
+    @Async("emailExecutor")
+    public void sendPromotionEmail(String toEmail, String userName, String title,
+            String message, String type,
+            String couponCode, String discountText,
+            String couponExpiry, String actionUrl) {
+        try {
+            Context context = new Context();
+            context.setVariable("userName", userName);
+            context.setVariable("title", title);
+            context.setVariable("message", message);
+            context.setVariable("type", type != null ? type : "PROMOTION");
+            context.setVariable("baseUrl", baseUrl);
+
+            if (couponCode != null && !couponCode.trim().isEmpty()) {
+                context.setVariable("couponCode", couponCode);
+            }
+            if (discountText != null && !discountText.trim().isEmpty()) {
+                context.setVariable("discountText", discountText);
+            }
+            if (couponExpiry != null && !couponExpiry.trim().isEmpty()) {
+                context.setVariable("couponExpiry", couponExpiry);
+            }
+            if (actionUrl != null && !actionUrl.trim().isEmpty()) {
+                context.setVariable("actionUrl", actionUrl.startsWith("/") ? baseUrl + actionUrl : actionUrl);
+            }
+
+            String htmlContent = templateEngine.process("email/promotion", context);
+            sendHtmlEmail(toEmail, title + " - Badminton Shop", htmlContent);
+            log.info("Promotion email sent to: {} - Title: {}", toEmail, title);
+
+        } catch (Exception e) {
+            log.error("Failed to send promotion email to: {}", toEmail, e);
+        }
+    }
+
+    /**
+     * Send simple promotion email (without coupon details)
+     */
+    @Async("emailExecutor")
+    public void sendPromotionEmail(String toEmail, String userName, String title,
+            String message, String actionUrl) {
+        sendPromotionEmail(toEmail, userName, title, message, "PROMOTION", null, null, null, actionUrl);
     }
 }
