@@ -1,8 +1,8 @@
-# 🏸 Badminton Shop
+# Badminton Shop
 
 E-commerce platform for badminton equipment with stringing service.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -14,27 +14,27 @@ E-commerce platform for badminton equipment with stringing service.
 - [API Documentation](#api-documentation)
 - [Contributing](#contributing)
 
-## ✨ Features
+## Features
 
 ### Customer Features
-- 🛒 Shopping cart with guest support
-- 🎯 Product filtering and search
-- 🏷️ Coupon and promotions
-- 📦 Order tracking
-- ⭐ Product reviews and ratings
-- 🔔 Price drop notifications
-- 🎾 **Stringing service** - Special feature for racket stringing
+- Shopping cart with guest support
+- Product filtering and search
+- Coupon and promotions
+- Order tracking
+- Product reviews and ratings
+- Price drop notifications
+- **Stringing service** - Special feature for racket stringing
 
 ### Admin Features
-- 📊 Dashboard with analytics
-- 📦 Product management
-- 👥 Customer management
-- 📋 Order management
-- 🧵 **Stringing workflow** - Assign and track stringing jobs
-- 🎫 Coupon management
-- 📝 Content management (Blog, Banners)
+-  Dashboard with analytics
+-  Product management
+-  Customer management
+-  Order management
+-  **Stringing workflow** - Assign and track stringing jobs
+-  Coupon management
+-  Content management (Blog, Banners)
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Backend**: Spring Boot 3.2.x, Java 17
 - **Frontend**: Thymeleaf, Bootstrap 5, jQuery
@@ -46,7 +46,7 @@ E-commerce platform for badminton equipment with stringing service.
 - **Payment**: VNPay, MoMo, ZaloPay
 - **API Docs**: SpringDoc OpenAPI (Swagger)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 badminton-shop/
@@ -99,7 +99,7 @@ badminton-shop/
 └── README.md
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -134,7 +134,7 @@ spring.security.oauth2.client.registration.google.client-id=your-client-id
 spring.security.oauth2.client.registration.google.client-secret=your-client-secret
 ```
 
-## 🗄 Database Setup
+## Database Setup
 
 Run the MySQL schema file:
 ```bash
@@ -143,7 +143,7 @@ mysql -u root -p badminton_shop < badminton_shop_mysql_full.sql
 
 Or use Flyway/Liquibase for migrations (recommended for team).
 
-## ▶️ Running the Application
+## Running the Application
 
 ### Development Mode
 
@@ -172,11 +172,11 @@ java -jar -Dspring.profiles.active=prod target/badminton-shop-1.0.0-SNAPSHOT.jar
 - **Swagger UI**: http://localhost:8080/swagger-ui.html
 - **API Docs**: http://localhost:8080/api-docs
 
-## 📚 API Documentation
+## API Documentation
 
 Swagger UI is available at `/swagger-ui.html` (disabled in production).
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -186,7 +186,7 @@ mvn test
 mvn test jacoco:report
 ```
 
-## 👥 Contributing
+## Contributing
 
 1. Create a feature branch: `git checkout -b feature/your-feature`
 2. Commit changes: `git commit -m 'Add some feature'`
@@ -200,10 +200,10 @@ mvn test jacoco:report
 - Write unit tests for services
 - Document public APIs
 
-## 📝 License
+## License
 
 This project is proprietary. All rights reserved.
 
 ---
 
-Made with ❤️ by Badminton Shop Team
+Made with <3 by Badminton Shop Team
